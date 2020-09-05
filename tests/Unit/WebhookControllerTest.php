@@ -31,7 +31,7 @@ class WebhookControllerTest extends TestCase
             return $request->getContent() == json_encode($event->payload);
         });
 
-        $this->assertEquals('Webhook Handled', $response->getContent());
+        $this->assertSame('Webhook Handled', $response->getContent());
     }
 
     public function test_normal_response_is_returned_if_method_is_missing()
@@ -51,7 +51,7 @@ class WebhookControllerTest extends TestCase
 
         Event::assertNotDispatched(WebhookHandled::class);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     private function request($event)

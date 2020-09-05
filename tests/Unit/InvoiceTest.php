@@ -36,7 +36,7 @@ class InvoiceTest extends TestCase
         $date = $invoice->date();
 
         $this->assertInstanceOf(Carbon::class, $date);
-        $this->assertEquals(1560541724, $date->unix());
+        $this->assertSame(1560541724, $date->unix());
     }
 
     public function test_it_can_return_the_invoice_date_with_a_timezone()
@@ -53,7 +53,7 @@ class InvoiceTest extends TestCase
         $date = $invoice->date('CET');
 
         $this->assertInstanceOf(CarbonTimeZone::class, $timezone = $date->getTimezone());
-        $this->assertEquals('CET', $timezone->getName());
+        $this->assertSame('CET', $timezone->getName());
     }
 
     public function test_it_can_return_its_total()
@@ -70,7 +70,7 @@ class InvoiceTest extends TestCase
 
         $total = $invoice->total();
 
-        $this->assertEquals('$10.00', $total);
+        $this->assertSame('$10.00', $total);
     }
 
     public function test_it_can_return_its_raw_total()
@@ -87,7 +87,7 @@ class InvoiceTest extends TestCase
 
         $total = $invoice->rawTotal();
 
-        $this->assertEquals(1000, $total);
+        $this->assertSame(1000, $total);
     }
 
     public function test_it_returns_a_lower_total_when_there_was_a_starting_balance()
@@ -105,7 +105,7 @@ class InvoiceTest extends TestCase
 
         $total = $invoice->total();
 
-        $this->assertEquals('$5.50', $total);
+        $this->assertSame('$5.50', $total);
     }
 
     public function test_it_can_return_its_subtotal()
@@ -122,7 +122,7 @@ class InvoiceTest extends TestCase
 
         $subtotal = $invoice->subtotal();
 
-        $this->assertEquals('$5.00', $subtotal);
+        $this->assertSame('$5.00', $subtotal);
     }
 
     public function test_it_can_determine_when_the_customer_has_a_starting_balance()
@@ -167,7 +167,7 @@ class InvoiceTest extends TestCase
 
         $startingBalance = $invoice->startingBalance();
 
-        $this->assertEquals('-$4.50', $startingBalance);
+        $this->assertSame('-$4.50', $startingBalance);
     }
 
     public function test_it_can_return_its_raw_starting_balance()
@@ -183,7 +183,7 @@ class InvoiceTest extends TestCase
 
         $startingBalance = $invoice->rawStartingBalance();
 
-        $this->assertEquals(-450, $startingBalance);
+        $this->assertSame(-450, $startingBalance);
     }
 
     public function test_it_can_determine_if_it_has_a_discount_applied()
@@ -222,7 +222,7 @@ class InvoiceTest extends TestCase
 
         $tax = $invoice->tax();
 
-        $this->assertEquals('$0.50', $tax);
+        $this->assertSame('$0.50', $tax);
     }
 
     public function test_it_can_determine_if_the_customer_was_exempt_from_taxes()

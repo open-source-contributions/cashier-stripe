@@ -130,7 +130,7 @@ class SubscriptionsTest extends FeatureTestCase
         // Create Subscription
         $user->newSubscription('main', static::$planId)->create('pm_card_visa');
 
-        $this->assertEquals(1, count($user->subscriptions));
+        $this->assertCount(1, $user->subscriptions);
         $this->assertNotNull($user->subscription('main')->stripe_id);
 
         $this->assertTrue($user->subscribed('main'));
@@ -179,21 +179,21 @@ class SubscriptionsTest extends FeatureTestCase
         // Increment & Decrement
         $subscription->incrementQuantity();
 
-        $this->assertEquals(2, $subscription->quantity);
+        $this->assertSame(2, $subscription->quantity);
 
         $subscription->decrementQuantity();
 
-        $this->assertEquals(1, $subscription->quantity);
+        $this->assertSame(1, $subscription->quantity);
 
         // Swap Plan and invoice immediately.
         $subscription->swapAndInvoice(static::$otherPlanId);
 
-        $this->assertEquals(static::$otherPlanId, $subscription->stripe_plan);
+        $this->assertSame(static::$otherPlanId, $subscription->stripe_plan);
 
         // Invoice Tests
         $invoice = $user->invoices()[1];
 
-        $this->assertEquals('$10.00', $invoice->total());
+        $this->assertSame('$10.00', $invoice->total());
         $this->assertFalse($invoice->hasDiscount());
         $this->assertFalse($invoice->hasStartingBalance());
         $this->assertNull($invoice->coupon());
@@ -210,7 +210,7 @@ class SubscriptionsTest extends FeatureTestCase
             'coupon' => static::$couponId,
         ]);
 
-        $this->assertEquals(static::$couponId, $subscription->asStripeSubscription()->discount->coupon->id);
+        $this->assertSame(static::$couponId, $subscription->asStripeSubscription()->discount->coupon->id);
     }
 
     public function test_declined_card_during_subscribing_results_in_an_exception()
@@ -272,7 +272,7 @@ class SubscriptionsTest extends FeatureTestCase
             $this->assertTrue($e->payment->requiresPaymentMethod());
 
             // Assert that the plan was swapped anyway.
-            $this->assertEquals(static::$premiumPlanId, $subscription->refresh()->stripe_plan);
+            $this->assertSame(static::$premiumPlanId, $subscription->refresh()->stripe_plan);
 
             // Assert subscription is past due.
             $this->assertTrue($subscription->pastDue());
@@ -298,7 +298,7 @@ class SubscriptionsTest extends FeatureTestCase
             $this->assertTrue($e->payment->requiresAction());
 
             // Assert that the plan was swapped anyway.
-            $this->assertEquals(static::$premiumPlanId, $subscription->refresh()->stripe_plan);
+            $this->assertSame(static::$premiumPlanId, $subscription->refresh()->stripe_plan);
 
             // Assert subscription is past due.
             $this->assertTrue($subscription->pastDue());
@@ -318,7 +318,7 @@ class SubscriptionsTest extends FeatureTestCase
         $subscription = $subscription->swap(static::$planId);
 
         // Assert that the plan was swapped anyway.
-        $this->assertEquals(static::$planId, $subscription->refresh()->stripe_plan);
+        $this->assertSame(static::$planId, $subscription->refresh()->stripe_plan);
 
         // Assert subscription is still active.
         $this->assertTrue($subscription->active());
@@ -337,7 +337,7 @@ class SubscriptionsTest extends FeatureTestCase
         $subscription = $subscription->swap(static::$planId);
 
         // Assert that the plan was swapped anyway.
-        $this->assertEquals(static::$planId, $subscription->refresh()->stripe_plan);
+        $this->assertSame(static::$planId, $subscription->refresh()->stripe_plan);
 
         // Assert subscription is still active.
         $this->assertTrue($subscription->active());
@@ -367,8 +367,8 @@ class SubscriptionsTest extends FeatureTestCase
         $invoice = $user->invoices()[0];
 
         $this->assertTrue($invoice->hasDiscount());
-        $this->assertEquals('$5.00', $invoice->total());
-        $this->assertEquals('$5.00', $invoice->amountOff());
+        $this->assertSame('$5.00', $invoice->total());
+        $this->assertSame('$5.00', $invoice->amountOff());
         $this->assertFalse($invoice->discountIsPercentage());
     }
 
@@ -396,11 +396,11 @@ class SubscriptionsTest extends FeatureTestCase
         $invoice = $user->invoices()[0];
         $invoicePeriod = $invoice->invoiceItems()[0]->period;
 
-        $this->assertEquals(
+        $this->assertSame(
             (new DateTime('now'))->format('Y-m-d'),
             date('Y-m-d', $invoicePeriod->start)
         );
-        $this->assertEquals(
+        $this->assertSame(
             (new DateTime('first day of next month'))->format('Y-m-d'),
             date('Y-m-d', $invoicePeriod->end)
         );
@@ -421,7 +421,7 @@ class SubscriptionsTest extends FeatureTestCase
         $this->assertTrue($subscription->onTrial());
         $this->assertFalse($subscription->recurring());
         $this->assertFalse($subscription->ended());
-        $this->assertEquals(Carbon::today()->addDays(7)->day, $subscription->trial_ends_at->day);
+        $this->assertSame(Carbon::today()->addDays(7)->day, $subscription->trial_ends_at->day);
 
         // Cancel Subscription
         $subscription->cancel();
@@ -439,7 +439,7 @@ class SubscriptionsTest extends FeatureTestCase
         $this->assertTrue($subscription->onTrial());
         $this->assertFalse($subscription->recurring());
         $this->assertFalse($subscription->ended());
-        $this->assertEquals(Carbon::today()->addDays(7)->day, $subscription->trial_ends_at->day);
+        $this->assertSame(Carbon::today()->addDays(7)->day, $subscription->trial_ends_at->day);
     }
 
     public function test_creating_subscription_with_explicit_trial()
@@ -484,25 +484,25 @@ class SubscriptionsTest extends FeatureTestCase
 
         $subscription = $user->newSubscription('main', static::$premiumPlanId)->create('pm_card_visa');
 
-        $this->assertEquals(2000, ($invoice = $user->invoices()->first())->rawTotal());
+        $this->assertSame(2000, ($invoice = $user->invoices()->first())->rawTotal());
 
         $subscription->noProrate()->swap(static::$planId);
 
         // Assert that no new invoice was created because of no prorating.
         $this->assertEquals($invoice->id, $user->invoices()->first()->id);
-        $this->assertEquals(1000, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(1000, $user->upcomingInvoice()->rawTotal());
 
         $subscription->swapAndInvoice(static::$premiumPlanId);
 
         // Assert that a new invoice was created because of immediate invoicing.
         $this->assertNotSame($invoice->id, ($invoice = $user->invoices()->first())->id);
-        $this->assertEquals(1000, $invoice->rawTotal());
-        $this->assertEquals(2000, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(1000, $invoice->rawTotal());
+        $this->assertSame(2000, $user->upcomingInvoice()->rawTotal());
 
         $subscription->prorate()->swap(static::$planId);
 
         // Get back from unused time on premium plan on next invoice.
-        $this->assertEquals(0, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(0, $user->upcomingInvoice()->rawTotal());
     }
 
     public function test_no_prorate_on_subscription_create()
@@ -516,12 +516,12 @@ class SubscriptionsTest extends FeatureTestCase
             'billing_cycle_anchor' => Carbon::now()->addDays(5)->startOfDay()->unix(),
         ]);
 
-        $this->assertEquals(static::$planId, $subscription->stripe_plan);
+        $this->assertSame(static::$planId, $subscription->stripe_plan);
         $this->assertTrue($subscription->active());
 
         $subscription = $subscription->swap(self::$otherPlanId);
 
-        $this->assertEquals(static::$otherPlanId, $subscription->stripe_plan);
+        $this->assertSame(static::$otherPlanId, $subscription->stripe_plan);
         $this->assertTrue($subscription->active());
     }
 
@@ -536,14 +536,14 @@ class SubscriptionsTest extends FeatureTestCase
             'billing_cycle_anchor' => Carbon::now()->addDays(5)->startOfDay()->unix(),
         ]);
 
-        $this->assertEquals(static::$planId, $subscription->stripe_plan);
+        $this->assertSame(static::$planId, $subscription->stripe_plan);
         $this->assertCount(0, $user->invoices());
         $this->assertSame(Invoice::STATUS_DRAFT, $user->upcomingInvoice()->status);
         $this->assertTrue($subscription->active());
 
         $subscription = $subscription->swapAndInvoice(self::$otherPlanId);
 
-        $this->assertEquals(static::$otherPlanId, $subscription->stripe_plan);
+        $this->assertSame(static::$otherPlanId, $subscription->stripe_plan);
         $this->assertCount(0, $user->invoices());
         $this->assertSame(Invoice::STATUS_DRAFT, $user->upcomingInvoice()->status);
         $this->assertTrue($subscription->active());
@@ -573,7 +573,7 @@ class SubscriptionsTest extends FeatureTestCase
 
         $customer = $user->asStripeCustomer();
 
-        $this->assertEquals(static::$couponId, $customer->discount->coupon->id);
+        $this->assertSame(static::$couponId, $customer->discount->coupon->id);
     }
 
     public function test_subscription_state_scopes()
@@ -711,6 +711,6 @@ class SubscriptionsTest extends FeatureTestCase
         ]);
         $stripeSubscription = $subscription->asStripeSubscription();
 
-        $this->assertEquals($backdateStartDate, $stripeSubscription->start_date);
+        $this->assertSame($backdateStartDate, $stripeSubscription->start_date);
     }
 }

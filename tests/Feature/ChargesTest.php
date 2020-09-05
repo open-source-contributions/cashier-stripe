@@ -15,7 +15,7 @@ class ChargesTest extends FeatureTestCase
         $response = $user->charge(1000, 'pm_card_visa');
 
         $this->assertInstanceOf(Payment::class, $response);
-        $this->assertEquals(1000, $response->rawAmount());
+        $this->assertSame(1000, $response->rawAmount());
         $this->assertEquals($user->stripe_id, $response->customer);
     }
 
@@ -26,7 +26,7 @@ class ChargesTest extends FeatureTestCase
         $response = $user->charge(1000, 'pm_card_visa');
 
         $this->assertInstanceOf(Payment::class, $response);
-        $this->assertEquals(1000, $response->rawAmount());
+        $this->assertSame(1000, $response->rawAmount());
         $this->assertNull($response->customer);
     }
 
@@ -39,8 +39,8 @@ class ChargesTest extends FeatureTestCase
         $user->invoiceFor('Laravel Cashier', 1000);
 
         $invoice = $user->invoices()[0];
-        $this->assertEquals('$10.00', $invoice->total());
-        $this->assertEquals('Laravel Cashier', $invoice->invoiceItems()[0]->asStripeInvoiceLineItem()->description);
+        $this->assertSame('$10.00', $invoice->total());
+        $this->assertSame('Laravel Cashier', $invoice->invoiceItems()[0]->asStripeInvoiceLineItem()->description);
     }
 
     public function test_customer_can_be_refunded()
@@ -52,7 +52,7 @@ class ChargesTest extends FeatureTestCase
         $invoice = $user->invoiceFor('Laravel Cashier', 1000);
         $refund = $user->refund($invoice->payment_intent);
 
-        $this->assertEquals(1000, $refund->amount);
+        $this->assertSame(1000, $refund->amount);
     }
 
     public function test_charging_may_require_an_extra_action()
@@ -69,7 +69,7 @@ class ChargesTest extends FeatureTestCase
             $this->assertTrue($e->payment->requiresAction());
 
             // Assert that the payment was for the correct amount.
-            $this->assertEquals(1000, $e->payment->rawAmount());
+            $this->assertSame(1000, $e->payment->rawAmount());
         }
     }
 }

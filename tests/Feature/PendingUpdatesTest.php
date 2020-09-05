@@ -103,7 +103,7 @@ class PendingUpdatesTest extends FeatureTestCase
             $this->fail('Expected exception '.PaymentFailure::class.' was not thrown.');
         } catch (StripeCardException $e) {
             // Assert that the plan was not swapped.
-            $this->assertEquals(static::$planId, $subscription->refresh()->stripe_plan);
+            $this->assertSame(static::$planId, $subscription->refresh()->stripe_plan);
 
             // Assert subscription is active.
             $this->assertTrue($subscription->active());

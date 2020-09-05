@@ -38,7 +38,7 @@ class InvoicesTest extends FeatureTestCase
         $response = $user->invoiceFor('Laracon', 49900);
 
         $this->assertInstanceOf(Invoice::class, $response);
-        $this->assertEquals(49900, $response->total);
+        $this->assertSame(49900, $response->total);
     }
 
     public function test_find_invoice_by_id()
@@ -51,7 +51,7 @@ class InvoicesTest extends FeatureTestCase
         $invoice = $user->findInvoice($invoice->id);
 
         $this->assertInstanceOf(Invoice::class, $invoice);
-        $this->assertEquals(49900, $invoice->rawTotal());
+        $this->assertSame(49900, $invoice->rawTotal());
     }
 
     public function test_it_throws_an_exception_if_the_invoice_does_not_belong_to_the_user()

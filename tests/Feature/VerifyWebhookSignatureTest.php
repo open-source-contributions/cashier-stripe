@@ -40,7 +40,7 @@ class VerifyWebhookSignatureTest extends TestCase
                 return new Response('OK');
             });
 
-        $this->assertEquals('OK', $response->content());
+        $this->assertSame('OK', $response->content());
     }
 
     public function test_response_is_received_when_timestamp_is_within_tolerance_zone()
@@ -53,7 +53,7 @@ class VerifyWebhookSignatureTest extends TestCase
                 return new Response('OK');
             });
 
-        $this->assertEquals('OK', $response->content());
+        $this->assertSame('OK', $response->content());
     }
 
     public function test_app_aborts_when_timestamp_is_too_old()

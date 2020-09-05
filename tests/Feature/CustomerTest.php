@@ -13,7 +13,7 @@ class CustomerTest extends FeatureTestCase
 
         $customer = $user->updateStripeCustomer(['description' => 'Mohamed Said']);
 
-        $this->assertEquals('Mohamed Said', $customer->description);
+        $this->assertSame('Mohamed Said', $customer->description);
     }
 
     public function test_customers_can_generate_a_billing_portal_url()

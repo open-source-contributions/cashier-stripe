@@ -26,8 +26,8 @@ class PaymentMethodsTest extends FeatureTestCase
         $paymentMethod = $user->addPaymentMethod('pm_card_visa');
 
         $this->assertInstanceOf(PaymentMethod::class, $paymentMethod);
-        $this->assertEquals('visa', $paymentMethod->card->brand);
-        $this->assertEquals('4242', $paymentMethod->card->last4);
+        $this->assertSame('visa', $paymentMethod->card->brand);
+        $this->assertSame('4242', $paymentMethod->card->last4);
         $this->assertTrue($user->hasPaymentMethod());
         $this->assertFalse($user->hasDefaultPaymentMethod());
     }
@@ -77,15 +77,15 @@ class PaymentMethodsTest extends FeatureTestCase
         $paymentMethod = $user->updateDefaultPaymentMethod('pm_card_visa');
 
         $this->assertInstanceOf(PaymentMethod::class, $paymentMethod);
-        $this->assertEquals('visa', $paymentMethod->card->brand);
-        $this->assertEquals('4242', $paymentMethod->card->last4);
+        $this->assertSame('visa', $paymentMethod->card->brand);
+        $this->assertSame('4242', $paymentMethod->card->last4);
         $this->assertTrue($user->hasDefaultPaymentMethod());
 
         $paymentMethod = $user->defaultPaymentMethod();
 
         $this->assertInstanceOf(PaymentMethod::class, $paymentMethod);
-        $this->assertEquals('visa', $paymentMethod->card->brand);
-        $this->assertEquals('4242', $paymentMethod->card->last4);
+        $this->assertSame('visa', $paymentMethod->card->brand);
+        $this->assertSame('4242', $paymentMethod->card->last4);
     }
 
     public function test_legacy_we_can_retrieve_an_old_default_source_as_a_default_payment_method()
@@ -100,8 +100,8 @@ class PaymentMethodsTest extends FeatureTestCase
         $paymentMethod = $user->defaultPaymentMethod();
 
         $this->assertInstanceOf(StripeCard::class, $paymentMethod);
-        $this->assertEquals('Visa', $paymentMethod->brand);
-        $this->assertEquals('4242', $paymentMethod->last4);
+        $this->assertSame('Visa', $paymentMethod->brand);
+        $this->assertSame('4242', $paymentMethod->last4);
     }
 
     public function test_we_can_retrieve_all_payment_methods()
@@ -118,8 +118,8 @@ class PaymentMethodsTest extends FeatureTestCase
         $paymentMethods = $user->paymentMethods();
 
         $this->assertCount(2, $paymentMethods);
-        $this->assertEquals('mastercard', $paymentMethods->first()->card->brand);
-        $this->assertEquals('visa', $paymentMethods->last()->card->brand);
+        $this->assertSame('mastercard', $paymentMethods->first()->card->brand);
+        $this->assertSame('visa', $paymentMethods->last()->card->brand);
     }
 
     public function test_we_can_sync_the_default_payment_method_from_stripe()
@@ -141,8 +141,8 @@ class PaymentMethodsTest extends FeatureTestCase
 
         $user = $user->updateDefaultPaymentMethodFromStripe();
 
-        $this->assertEquals('visa', $user->card_brand);
-        $this->assertEquals('4242', $user->card_last_four);
+        $this->assertSame('visa', $user->card_brand);
+        $this->assertSame('4242', $user->card_last_four);
     }
 
     public function test_we_delete_all_payment_methods()

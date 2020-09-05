@@ -269,7 +269,7 @@ class MultiplanSubscriptionsTest extends FeatureTestCase
 
         $premiumPlan = $subscription->findItemOrFail(static::$premiumPlanId);
 
-        $this->assertEquals(3, $premiumPlan->quantity);
+        $this->assertSame(3, $premiumPlan->quantity);
     }
 
     public function test_subscription_items_can_swap_plans()
@@ -294,7 +294,7 @@ class MultiplanSubscriptionsTest extends FeatureTestCase
 
         $subscription = $user->newSubscription('main', static::$premiumPlanId)->create('pm_card_visa');
 
-        $this->assertEquals(2000, ($invoice = $user->invoices()->first())->rawTotal());
+        $this->assertSame(2000, ($invoice = $user->invoices()->first())->rawTotal());
 
         $subscription->noProrate()->addPlan(self::$otherPlanId);
 
@@ -304,14 +304,14 @@ class MultiplanSubscriptionsTest extends FeatureTestCase
         $subscription->addPlanAndInvoice(self::$planId);
 
         // Assert that a new invoice was created because of no prorating.
-        $this->assertEquals(1000, ($invoice = $user->invoices()->first())->rawTotal());
-        $this->assertEquals(4000, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(1000, ($invoice = $user->invoices()->first())->rawTotal());
+        $this->assertSame(4000, $user->upcomingInvoice()->rawTotal());
 
         $subscription->noProrate()->removePlan(self::$premiumPlanId);
 
         // Assert that no new invoice was created because of no prorating.
         $this->assertEquals($invoice->id, $user->invoices()->first()->id);
-        $this->assertEquals(2000, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(2000, $user->upcomingInvoice()->rawTotal());
     }
 
     public function test_subscription_item_quantity_changes_can_be_prorated()
@@ -322,11 +322,11 @@ class MultiplanSubscriptionsTest extends FeatureTestCase
             ->quantity(3, self::$otherPlanId)
             ->create('pm_card_visa');
 
-        $this->assertEquals(4000, ($invoice = $user->invoices()->first())->rawTotal());
+        $this->assertSame(4000, ($invoice = $user->invoices()->first())->rawTotal());
 
         $subscription->noProrate()->updateQuantity(1, self::$otherPlanId);
 
-        $this->assertEquals(2000, $user->upcomingInvoice()->rawTotal());
+        $this->assertSame(2000, $user->upcomingInvoice()->rawTotal());
     }
 
     /**
